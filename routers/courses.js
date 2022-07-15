@@ -1,42 +1,36 @@
-const express = require('express')
-const router = express.Router()
+const { Router } = require('express');
+const router = Router();
 
-const {Department} = require('../models/department.js')
+const { Department } = require('../models/department.js')
 
-const courseModel =require('../models/course.js')
-
-
+const Course = require('../models/course.js')
 
 router.get('/courses', (req, res) => {
-    res.send('Hello this is me from router file!')
+   res.send('Hello this is me from router file!')
 })
 
 router.post('/courses', async (req, res) => {
+   try {
+      console.log(req.body);
+      const course = new Course({
+         name: req.body.name,
+         duration: req.body.duration,
+         startDate: req.body.startDate,
+         endDate: req.body.endDate,
+         intake: req.body.intake
+      });
 
-   
-     try{
-     
-
-      const course = new courseModel({
-         name : req.body.name,
-         duration : req.body.duration,
-         startDate : req.body.startDate,
-         endDate : req.body.endDate,
-         intake : req.body.intake
-        })
-       
-
-      const result = await course.save()
-      if(!result){
+      const result = await course.save();
+      console.log('result: ', result);
+      if (!result) {
          res.status(404).json('mesesage :  Course not found')
       }
-       res.json(result)
-       console.log(result)
-     }catch(err){
-     res.json(err)
-     }
-
-
-})
+      console.log(result)
+      res.json(result)
+   } catch (err) {
+      console.log(typeof err)
+      res.json({ err })
+   }
+});
 
 module.exports = router
